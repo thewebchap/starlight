@@ -27,8 +27,8 @@ contract NFT_Escrow {
     }
 
     function withdraw(uint256 tokenId) public {
-        tokenOwners[tokenId] = address(0);
         // bool success = erc721.transfer(msg.sender, amount);
         // require(success, "ERC721 transfer failed");
+        tokenOwners[tokenId] = address(0);
     }
 }

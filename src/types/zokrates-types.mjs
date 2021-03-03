@@ -34,6 +34,10 @@ export function getVisitableKeys(nodeType) {
     case 'Identifier':
     case 'Literal':
       return [];
+    case 'FunctionCall':
+      return ['expression', 'arguments'];
+    case 'ElementaryTypeNameExpression':
+      return ['typeName'];
     case 'PartitionedIncrementationStatementBoilerplate':
       return ['addend'];
     case 'PartitionedDecrementationStatementBoilerplate':
@@ -197,6 +201,21 @@ export function buildNode(nodeType, fields = {}) {
       return {
         nodeType,
         args,
+      };
+    }
+    case 'FunctionCall': {
+      const { expression = {}, arguments: args = [] } = fields;
+      return {
+        nodeType,
+        expression,
+        arguments: args, // 'arguments' is a reserved word in JS
+      };
+    }
+    case 'ElementaryTypeNameExpression': {
+      const { typeName = {} } = fields;
+      return {
+        nodeType,
+        typeName,
       };
     }
     case 'Boilerplate': {

@@ -312,6 +312,19 @@ const visitor = {
     },
   },
 
+  // e.g. for the statement `address(this)`, `address()` is an ElementaryTypeNameExpression for the ElementaryTypeName `address`
+  ElementaryTypeNameExpression: {
+    enter(path) {
+      const { node, parent } = path;
+      const newNode = buildNode('ElementaryTypeNameExpression');
+
+      node._newASTPointer = newNode;
+      parent._newASTPointer[path.containerName] = newNode;
+    },
+
+    exit(path) {},
+  },
+
   Identifier: {
     enter(path) {
       const { node, parent } = path;
@@ -385,6 +398,14 @@ const visitor = {
 
         // ignore external function calls; they'll be retained in Solidity, so won't be copied over to a circuit.
         state.skipSubNodes = true;
+      }
+
+      newNode = buildNode('FunctionCall');
+      node._newASTPointer = newNode;
+      if (Array.isArray(parent._newASTPointer[path.containerName])) {
+        parent._newASTPointer[path.containerName].push(newNode);
+      } else {
+        parent._newASTPointer[path.containerName] = newNode;
       }
     },
   },
